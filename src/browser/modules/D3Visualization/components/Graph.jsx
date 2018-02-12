@@ -111,7 +111,10 @@ export class GraphComponent extends Component {
         this.props.getNodeNeighbours,
         this.props.onItemMouseOver,
         this.props.onItemSelect,
-        this.props.onGraphModelChange
+        this.props.onGraphModelChange,
+        this.props.onDblClick,
+        this.props.urlAttribute,
+        this.props.copyAttribute
       )
       this.graphEH.bindEventHandlers()
       this.state.currentStyleRules = this.props.graphStyle.toString()

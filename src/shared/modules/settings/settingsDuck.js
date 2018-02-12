@@ -43,6 +43,15 @@ export const getInitialNodeDisplay = state =>
 export const getScrollToTop = state => state[NAME].scrollToTop
 export const shouldReportUdc = state => state[NAME].shouldReportUdc !== false
 export const shouldAutoComplete = state => state[NAME].autoComplete !== false
+export const getOnDblClick = state =>
+  state[NAME].onDblClick || initialState.onDblClick
+export const getUrlAttribute = state =>
+  state[NAME].urlAttribute || initialState.urlAttribute
+export const getCopyAttribute = state =>
+  state[NAME].copyAttribute || initialState.copyAttribute
+export const shouldShowThumbnail = state => state[NAME].showThumbnail !== false
+export const getThumbnailAttribute = state =>
+  state[NAME].thumbnailAttribute || initialState.thumbnailAttribute
 
 const browserSyncConfig = (host = 'https://auth.neo4j.com') => ({
   authWindowUrl: `${host}/indexNewBrowser.html`,
@@ -63,7 +72,7 @@ export const shouldUseCypherThread = state => state[NAME].useCypherThread
 
 const initialState = {
   cmdchar: ':',
-  maxHistory: 30,
+  maxHistory: 100,
   theme: 'normal',
   useBoltRouting: false,
   initCmd: ':play start',
@@ -77,7 +86,12 @@ const initialState = {
   scrollToTop: true,
   maxFrames: 30,
   editorAutocomplete: true,
-  useCypherThread: true
+  useCypherThread: true,
+  onDblClick: 'expand',
+  urlAttribute: 'url | http://tubularlabs.com/creator/{creator_id}',
+  copyAttribute: 'gid | creator_id',
+  showThumbnail: false,
+  thumbnailAttribute: 'thumbnail'
 }
 
 export default function settings (state = initialState, action) {

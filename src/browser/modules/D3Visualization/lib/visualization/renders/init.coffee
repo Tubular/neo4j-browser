@@ -20,6 +20,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict'
 
+duck = require("shared/modules/settings/settingsDuck")
+store = require("browser/index")
+
 do ->
   noop = ->
 
@@ -52,7 +55,6 @@ do ->
       text = selection.selectAll('text.caption').data((node) -> node.caption)
 
       text.enter().append('text')
-      # .classed('caption', true)
       .attr('text-anchor': 'middle')
       .attr('pointer-events': 'none')
 
@@ -61,6 +63,17 @@ do ->
       .attr('y', (line) -> line.baseline )
       .attr('font-size', (line) -> viz.style.forNode(line.node).get('font-size'))
       .attr('fill': (line) -> viz.style.forNode(line.node).get('text-color-internal'))
+      .attr('style': (line) ->
+        shadowColor = viz.style.forNode(line.node).get('shadow-color')
+        if (shadowColor != '')
+          'text-shadow:' +
+          '-1px 1px 2px ' + shadowColor +
+          ', -1px -1px 2px ' + shadowColor +
+          ', 1px 1px 2px ' + shadowColor +
+          ', 1px -1px 2px ' + shadowColor
+        else
+          ''
+      )
 
       text.exit().remove()
 
@@ -87,6 +100,7 @@ do ->
     onTick: noop
   )
 
+
   nodeRing = new neo.Renderer(
     onGraphChange: (selection) ->
       circles = selection.selectAll('circle.ring').data((node) -> [node])
@@ -103,6 +117,55 @@ do ->
         r: (node) -> node.radius + 4
 
       circles.exit().remove()
+
+    onTick: noop
+  )
+
+  nodeImage = new neo.Renderer(
+    onGraphChange: (selection, viz) ->
+      if not duck.getSettings(store.store.getState()).showThumbnail
+        return
+      thumbnailAttr = duck.getSettings(store.store.getState()).thumbnailAttribute
+      pattern = selection.selectAll('pattern').data((node) -> if node.propertyMap[thumbnailAttr] then [node] else [])
+
+      pattern.enter()
+      .append('pattern')
+      .attr
+        id: (id) -> "img-fill-" + id.id
+        patternUnits: 'userSpaceOnUse'
+        x: (node) -> -(node.radius)
+        y: (node) -> -(node.radius)
+        width: (node) -> (node.radius * 2)
+        height: (node) -> (node.radius * 2)
+
+      .append('image')
+      .attr("xlink:href", (link) -> link.propertyMap[thumbnailAttr])
+      .attr
+        type: 'image/png'
+        x: 0
+        y: 0
+        width: (node) -> (node.radius * 2)
+        height: (node) -> (node.radius * 2)
+
+      pattern.exit().remove()
+
+    onTick: noop
+  )
+
+  nodeImageFill = new neo.Renderer(
+    onGraphChange: (selection, viz) ->
+      filledCircle = selection.selectAll('circle.filled').data((node) -> [node])
+
+      filledCircle.enter()
+      .append('circle')
+      .classed('filled', true)
+      .attr
+        cx: 0
+        cy: 0
+        r: (node) -> node.radius-1
+        fill: (id) -> "url(#img-fill-" +  id.id + ")"
+
+      filledCircle.exit().remove()
 
     onTick: noop
   )
@@ -176,6 +239,8 @@ do ->
   neo.renderers.node.push(nodeIcon)
   neo.renderers.node.push(nodeCaption)
   neo.renderers.node.push(nodeRing)
+  neo.renderers.node.push(nodeImage)
+  neo.renderers.node.push(nodeImageFill)
   neo.renderers.relationship.push(arrowPath)
   neo.renderers.relationship.push(relationshipType)
   neo.renderers.relationship.push(relationshipOverlay)

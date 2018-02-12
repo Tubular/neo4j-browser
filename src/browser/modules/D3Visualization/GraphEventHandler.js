@@ -27,7 +27,10 @@ export class GraphEventHandler {
     getNodeNeighbours,
     onItemMouseOver,
     onItemSelected,
-    onGraphModelChange
+    onGraphModelChange,
+    onDblClick,
+    urlAttribute,
+    copyAttribute
   ) {
     this.graph = graph
     this.graphView = graphView
@@ -36,6 +39,9 @@ export class GraphEventHandler {
     this.onItemMouseOver = onItemMouseOver
     this.onItemSelected = onItemSelected
     this.onGraphModelChange = onGraphModelChange
+    this.onDblClick = onDblClick
+    this.urlAttribute = urlAttribute
+    this.copyAttribute = copyAttribute
   }
 
   graphModelChanged () {
@@ -66,6 +72,61 @@ export class GraphEventHandler {
     this.graphView.update()
   }
 
+  getProperty (d, name) {
+    if (name == '<id>') {
+      return d.id
+    }
+    for (var i = 0; i < d.propertyList.length; i++) {
+      if (d.propertyList[i].key == name) {
+        return d.propertyList[i].value
+      }
+    }
+    return null
+  }
+
+  nodeUrl (d) {
+    var attrs = this.urlAttribute.split('|')
+    for (var i = 0; i < attrs.length; ++i) {
+      var url = null
+      var choice = attrs[i].trim()
+      if (choice.includes('{')) {
+        for (var i = 0; i < d.propertyList.length; i++) {
+          choice = choice.replace(
+            '{' + d.propertyList[i].key + '}',
+            d.propertyList[i].value
+          )
+        }
+        if (!choice.includes('{')) {
+          url = choice
+        }
+      } else {
+        url = this.getProperty(d, choice)
+      }
+      if (url != null) {
+        window.open(url, '_blank')
+        break
+      }
+    }
+    this.deselectItem()
+  }
+
+  nodeCopy (d) {
+    var attrs = this.copyAttribute.split('|')
+    var text = null
+    attrs.push('<id>')
+    for (var i = 0; text == null && i < attrs.length; ++i) {
+      text = this.getProperty(d, attrs[i].trim())
+    }
+
+    var copyTextArea = document.createElement('textarea')
+    copyTextArea.value = text
+    document.body.appendChild(copyTextArea)
+    copyTextArea.select()
+    document.execCommand('copy')
+    document.body.removeChild(copyTextArea)
+    this.deselectItem()
+  }
+
   nodeClose (d) {
     this.graph.removeConnectedRelationships(d)
     this.graph.removeNode(d)
@@ -93,6 +154,16 @@ export class GraphEventHandler {
   }
 
   nodeDblClicked (d) {
+    if (this.onDblClick == 'expand') {
+      return this.nodeExpand(d)
+    } else if (this.onDblClick == 'open URL') {
+      return this.nodeUrl(d)
+    } else if (this.onDblClick == 'copy') {
+      return this.nodeCopy(d)
+    }
+  }
+
+  nodeExpand (d) {
     const graph = this.graph
     const graphView = this.graphView
     const graphModelChanged = this.graphModelChanged.bind(this)
@@ -184,7 +255,10 @@ export class GraphEventHandler {
       .on('nodeClose', this.nodeClose.bind(this))
       .on('nodeClicked', this.nodeClicked.bind(this))
       .on('nodeDblClicked', this.nodeDblClicked.bind(this))
+      .on('nodeExpand', this.nodeExpand.bind(this))
       .on('nodeUnlock', this.nodeUnlock.bind(this))
+      .on('nodeUrl', this.nodeUrl.bind(this))
+      .on('nodeCopy', this.nodeCopy.bind(this))
     this.onItemMouseOut()
   }
 }

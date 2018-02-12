@@ -211,6 +211,9 @@ export class ExplorerComponent extends Component {
       >
         {legend}
         <GraphComponent
+          onDblClick={this.props.onDblClick}
+          urlAttribute={this.props.urlAttribute}
+          copyAttribute={this.props.copyAttribute}
           fullscreen={this.props.fullscreen}
           frameHeight={this.props.frameHeight}
           relationships={this.state.relationships}

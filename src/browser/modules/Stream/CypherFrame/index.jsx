@@ -66,6 +66,9 @@ import {
   getMaxRows,
   getInitialNodeDisplay,
   getMaxNeighbours,
+  getOnDblClick,
+  getUrlAttribute,
+  getCopyAttribute,
   shouldAutoComplete
 } from 'shared/modules/settings/settingsDuck'
 import { setRecentView, getRecentView } from 'shared/modules/stream/streamDuck'
@@ -299,6 +302,9 @@ export class CypherFrame extends Component {
             initialNodeDisplay={this.props.initialNodeDisplay}
             autoComplete={this.props.autoComplete}
             maxNeighbours={this.props.maxNeighbours}
+            onDblClick={this.props.onDblClick}
+            urlAttribute={this.props.urlAttribute}
+            copyAttribute={this.props.copyAttribute}
           />
         </Display>
       </StyledFrameBody>
@@ -398,6 +404,9 @@ const mapStateToProps = (state, ownProps) => {
     maxRows: getMaxRows(state),
     initialNodeDisplay: getInitialNodeDisplay(state),
     maxNeighbours: getMaxNeighbours(state),
+    onDblClick: getOnDblClick(state),
+    urlAttribute: getUrlAttribute(state),
+    copyAttribute: getCopyAttribute(state),
     autoComplete: shouldAutoComplete(state),
     recentView: getRecentView(state),
     request: getRequest(state, ownProps.frame.requestId)

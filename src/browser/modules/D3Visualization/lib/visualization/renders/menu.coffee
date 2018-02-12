@@ -23,7 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 do ->
   noop = ->
 
-  numberOfItemsInContextMenu = 3
+  numberOfItemsInContextMenu = 5
 
   arc = (radius, itemNumber, width = 30) ->
     itemNumber = itemNumber - 1
@@ -98,19 +98,31 @@ do ->
     .remove()
 
   donutRemoveNode = new neo.Renderer(
-    onGraphChange: (selection, viz) -> createMenuItem(selection, viz, 'nodeClose', 1, 'remove_node', [-4, 0], '\uf00d', 'Remove node from the visualization')
+    onGraphChange: (selection, viz) -> createMenuItem(selection, viz, 'nodeClose', 1, 'remove_node', [0, 0], '\uf00d', 'Remove node from the visualization')
+
+    onTick: noop
+  )
+
+  donutUrlNode = new neo.Renderer(
+    onGraphChange: (selection, viz) -> createMenuItem(selection, viz, 'nodeUrl', 2, 'url_node', [0, 0], '\uf0ac', 'Open link defined in attribute or by template')
 
     onTick: noop
   )
 
   donutExpandNode = new neo.Renderer(
-    onGraphChange: (selection, viz) -> createMenuItem(selection, viz, 'nodeDblClicked', 2, 'expand_node', [0, 4], '\uf0b2', 'Expand child relationships')
+    onGraphChange: (selection, viz) -> createMenuItem(selection, viz, 'nodeExpand', 3, 'expand_node', [0, 4], '\uf0b2', 'Expand child relationships')
+
+    onTick: noop
+  )
+
+  donutCopyNode = new neo.Renderer(
+    onGraphChange: (selection, viz) -> createMenuItem(selection, viz, 'nodeCopy', 4, 'copy_node', [0, 0], '\uf0c5', 'Copy defined attribute from node')
 
     onTick: noop
   )
 
   donutUnlockNode = new neo.Renderer(
-    onGraphChange: (selection, viz) -> createMenuItem(selection, viz, 'nodeUnlock', 3, 'unlock_node', [4, 0], '\uf09c', 'Unlock the node to re-layout the graph')
+    onGraphChange: (selection, viz) -> createMenuItem(selection, viz, 'nodeUnlock', 5, 'unlock_node', [0, 0], '\uf09c', 'Unlock the node to re-layout the graph')
 
     onTick: noop
   )
@@ -118,3 +130,5 @@ do ->
   neo.renderers.menu.push(donutExpandNode)
   neo.renderers.menu.push(donutRemoveNode)
   neo.renderers.menu.push(donutUnlockNode)
+  neo.renderers.menu.push(donutUrlNode)
+  neo.renderers.menu.push(donutCopyNode)
