@@ -52,6 +52,8 @@ export const getCopyAttribute = state =>
 export const shouldShowThumbnail = state => state[NAME].showThumbnail !== false
 export const getThumbnailAttribute = state =>
   state[NAME].thumbnailAttribute || initialState.thumbnailAttribute
+export const getThumbnailOpacity = state =>
+  state[NAME].thumbnailOpacity || initialState.thumbnailOpacity
 
 const browserSyncConfig = (host = 'https://auth.neo4j.com') => ({
   authWindowUrl: `${host}/indexNewBrowser.html`,
@@ -91,7 +93,8 @@ const initialState = {
   urlAttribute: 'url | http://tubularlabs.com/creator/{creator_id}',
   copyAttribute: 'gid | creator_id',
   showThumbnail: false,
-  thumbnailAttribute: 'thumbnail'
+  thumbnailAttribute: 'thumbnail',
+  thumbnailOpacity: 1.0
 }
 
 export default function settings (state = initialState, action) {

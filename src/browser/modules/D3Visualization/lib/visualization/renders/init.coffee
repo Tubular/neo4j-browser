@@ -146,6 +146,7 @@ do ->
         y: 0
         width: (node) -> (node.radius * 2)
         height: (node) -> (node.radius * 2)
+        opacity: duck.getSettings(store.store.getState()).thumbnailOpacity
 
       pattern.exit().remove()
 

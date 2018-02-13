@@ -76,12 +76,7 @@ export class GraphEventHandler {
     if (name == '<id>') {
       return d.id
     }
-    for (var i = 0; i < d.propertyList.length; i++) {
-      if (d.propertyList[i].key == name) {
-        return d.propertyList[i].value
-      }
-    }
-    return null
+    return d.propertyMap[name]
   }
 
   nodeUrl (d) {

@@ -171,6 +171,13 @@ const visualSettings = [
           tooltip:
             'If "Show Thumbnails" is enabled, use the thumbnail URL defined in this attribute.'
         }
+      },
+      {
+        thumbnailOpacity: {
+          displayName: 'Thumbnail Opacity',
+          tooltip:
+            'If "Show Thumbnails" is enabled, use this opacity (between 0.0 and 1.0).'
+        }
       }
     ]
   }
