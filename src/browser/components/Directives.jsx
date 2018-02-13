@@ -89,10 +89,7 @@ const bindDynamicInputToDom = element => {
         )
       })
       if (filteredValueKeyElems.length > 0) {
-        valueForElem.onchange = event => {
-          filteredValueKeyElems[0].innerText = event.target.value
-        }
-        valueForElem.onkeyup = event => {
+        valueForElem.onchange = valueForElem.onkeyup = event => {
           filteredValueKeyElems[0].innerText = event.target.value
         }
       }

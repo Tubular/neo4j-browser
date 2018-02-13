@@ -20,8 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict'
 
-duck = require("shared/modules/settings/settingsDuck")
-store = require("browser/index")
+{getSettings} = require("shared/modules/settings/settingsDuck")
+{store} = require("browser/index")
 
 do ->
   noop = ->
@@ -60,17 +60,17 @@ do ->
 
       text
       .text((line) -> line.text)
-      .attr('y', (line) -> line.baseline )
+      .attr('y', (line) -> line.baseline)
       .attr('font-size', (line) -> viz.style.forNode(line.node).get('font-size'))
-      .attr('fill': (line) -> viz.style.forNode(line.node).get('text-color-internal'))
-      .attr('style': (line) ->
+      .attr('fill', (line) -> viz.style.forNode(line.node).get('text-color-internal'))
+      .attr('style', (line) ->
         shadowColor = viz.style.forNode(line.node).get('shadow-color')
-        if (shadowColor != '')
-          'text-shadow:' +
-          '-1px 1px 2px ' + shadowColor +
-          ', -1px -1px 2px ' + shadowColor +
-          ', 1px 1px 2px ' + shadowColor +
-          ', 1px -1px 2px ' + shadowColor
+        if shadowColor isnt ''
+          "text-shadow:
+          -1px 1px 2px #{shadowColor}
+          , -1px -1px 2px #{shadowColor}
+          , 1px 1px 2px #{shadowColor}
+          , 1px -1px 2px #{shadowColor}"
         else
           ''
       )
@@ -123,15 +123,19 @@ do ->
 
   nodeImage = new neo.Renderer(
     onGraphChange: (selection, viz) ->
-      if not duck.getSettings(store.store.getState()).showThumbnail
+      settings = getSettings(store.getState())
+      if not settings.showThumbnail
         return
-      thumbnailAttr = duck.getSettings(store.store.getState()).thumbnailAttribute
-      pattern = selection.selectAll('pattern').data((node) -> if node.propertyMap[thumbnailAttr] then [node] else [])
+      thumbnailAttr = settings.thumbnailAttribute
+
+      pattern = selection
+      .selectAll('pattern')
+      .data((node) -> if node.propertyMap[thumbnailAttr] then [node] else [])
 
       pattern.enter()
       .append('pattern')
       .attr
-        id: (id) -> "img-fill-" + id.id
+        id: (id) -> "img-fill-#{id.id}"
         patternUnits: 'userSpaceOnUse'
         x: (node) -> -(node.radius)
         y: (node) -> -(node.radius)
@@ -146,7 +150,7 @@ do ->
         y: 0
         width: (node) -> (node.radius * 2)
         height: (node) -> (node.radius * 2)
-        opacity: duck.getSettings(store.store.getState()).thumbnailOpacity
+        opacity: settings.thumbnailOpacity
 
       pattern.exit().remove()
 
@@ -164,7 +168,7 @@ do ->
         cx: 0
         cy: 0
         r: (node) -> node.radius-1
-        fill: (id) -> "url(#img-fill-" +  id.id + ")"
+        fill: (id) -> "url(#img-fill-#{id.id})"
 
       filledCircle.exit().remove()
 

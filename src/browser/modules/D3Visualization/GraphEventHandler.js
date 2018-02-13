@@ -73,23 +73,23 @@ export class GraphEventHandler {
   }
 
   getProperty (d, name) {
-    if (name == '<id>') {
+    if (name === '<id>') {
       return d.id
     }
     return d.propertyMap[name]
   }
 
   nodeUrl (d) {
-    var urlAttribute = getUrlAttribute(store.getState())
-    var attrs = urlAttribute.split('|')
-    for (var i = 0; i < attrs.length; ++i) {
-      var url = null
-      var choice = attrs[i].trim()
+    let urlAttribute = getUrlAttribute(store.getState())
+    let attrs = urlAttribute.split('|')
+    for (let attr of attrs) {
+      let url = null
+      let choice = attr.trim()
       if (choice.includes('{')) {
-        for (var i = 0; i < d.propertyList.length; i++) {
+        for (let property of d.propertyList) {
           choice = choice.replace(
-            '{' + d.propertyList[i].key + '}',
-            d.propertyList[i].value
+            `{${property.key}}`,
+            property.value
           )
         }
         if (!choice.includes('{')) {
@@ -107,15 +107,18 @@ export class GraphEventHandler {
   }
 
   nodeCopy (d) {
-    var copyAttribute = getCopyAttribute(store.getState())
-    var attrs = copyAttribute.split('|')
-    var text = null
+    let copyAttribute = getCopyAttribute(store.getState())
+    let attrs = copyAttribute.split('|')
+    let text = null
     attrs.push('<id>')
-    for (var i = 0; text == null && i < attrs.length; ++i) {
-      text = this.getProperty(d, attrs[i].trim())
+    for (let attr of attrs) {
+      text = this.getProperty(d, attr.trim())
+      if (text != null) {
+        break
+      }
     }
 
-    var copyTextArea = document.createElement('textarea')
+    let copyTextArea = document.createElement('textarea')
     copyTextArea.value = text
     document.body.appendChild(copyTextArea)
     copyTextArea.select()
@@ -151,12 +154,12 @@ export class GraphEventHandler {
   }
 
   nodeDblClicked (d) {
-    var onDblClick = getOnDblClick(store.getState())
-    if (onDblClick == 'expand') {
+    let onDblClick = getOnDblClick(store.getState())
+    if (onDblClick === 'expand') {
       return this.nodeExpand(d)
-    } else if (onDblClick == 'open URL') {
+    } else if (onDblClick === 'open URL') {
       return this.nodeUrl(d)
-    } else if (onDblClick == 'copy') {
+    } else if (onDblClick === 'copy') {
       return this.nodeCopy(d)
     }
   }
