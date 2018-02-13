@@ -19,6 +19,12 @@
  */
 
 import { mapNodes, mapRelationships, getGraphStats } from './mapper'
+import {
+  getOnDblClick,
+  getUrlAttribute,
+  getCopyAttribute
+} from 'shared/modules/settings/settingsDuck'
+import { store } from 'browser/index'
 
 export class GraphEventHandler {
   constructor (
@@ -27,10 +33,7 @@ export class GraphEventHandler {
     getNodeNeighbours,
     onItemMouseOver,
     onItemSelected,
-    onGraphModelChange,
-    onDblClick,
-    urlAttribute,
-    copyAttribute
+    onGraphModelChange
   ) {
     this.graph = graph
     this.graphView = graphView
@@ -39,9 +42,6 @@ export class GraphEventHandler {
     this.onItemMouseOver = onItemMouseOver
     this.onItemSelected = onItemSelected
     this.onGraphModelChange = onGraphModelChange
-    this.onDblClick = onDblClick
-    this.urlAttribute = urlAttribute
-    this.copyAttribute = copyAttribute
   }
 
   graphModelChanged () {
@@ -85,7 +85,8 @@ export class GraphEventHandler {
   }
 
   nodeUrl (d) {
-    var attrs = this.urlAttribute.split('|')
+    var urlAttribute = getUrlAttribute(store.getState())
+    var attrs = urlAttribute.split('|')
     for (var i = 0; i < attrs.length; ++i) {
       var url = null
       var choice = attrs[i].trim()
@@ -111,7 +112,8 @@ export class GraphEventHandler {
   }
 
   nodeCopy (d) {
-    var attrs = this.copyAttribute.split('|')
+    var copyAttribute = getCopyAttribute(store.getState())
+    var attrs = copyAttribute.split('|')
     var text = null
     attrs.push('<id>')
     for (var i = 0; text == null && i < attrs.length; ++i) {
@@ -154,11 +156,12 @@ export class GraphEventHandler {
   }
 
   nodeDblClicked (d) {
-    if (this.onDblClick == 'expand') {
+    var onDblClick = getOnDblClick(store.getState())
+    if (onDblClick == 'expand') {
       return this.nodeExpand(d)
-    } else if (this.onDblClick == 'open URL') {
+    } else if (onDblClick == 'open URL') {
       return this.nodeUrl(d)
-    } else if (this.onDblClick == 'copy') {
+    } else if (onDblClick == 'copy') {
       return this.nodeCopy(d)
     }
   }

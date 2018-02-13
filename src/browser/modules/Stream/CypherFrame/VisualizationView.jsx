@@ -160,9 +160,6 @@ export class Visualization extends Component {
       <StyledVisContainer fullscreen={this.props.fullscreen}>
         <ExplorerComponent
           maxNeighbours={this.props.maxNeighbours}
-          onDblClick={this.props.onDblClick}
-          urlAttribute={this.props.urlAttribute}
-          copyAttribute={this.props.copyAttribute}
           initialNodeDisplay={this.props.initialNodeDisplay}
           graphStyleData={this.props.graphStyleData}
           updateStyle={this.props.updateStyle}

@@ -404,9 +404,6 @@ const mapStateToProps = (state, ownProps) => {
     maxRows: getMaxRows(state),
     initialNodeDisplay: getInitialNodeDisplay(state),
     maxNeighbours: getMaxNeighbours(state),
-    onDblClick: getOnDblClick(state),
-    urlAttribute: getUrlAttribute(state),
-    copyAttribute: getCopyAttribute(state),
     autoComplete: shouldAutoComplete(state),
     recentView: getRecentView(state),
     request: getRequest(state, ownProps.frame.requestId)
